@@ -11,12 +11,18 @@ char bufor[500];
 String strona;
 int kitchenLed = 22;
 int livingLed = 30;
+int bedRoomLed = 35;
+int bathRoomLed = 40;
+int corridorLed = 45;
 
 void setup()
 {
   // put your setup code here, to run once:
   digitalWrite(kitchenLed, HIGH);
   digitalWrite(livingLed, HIGH);
+  digitalWrite(bedRoomLed, HIGH);
+  digitalWrite(bathRoomLed, HIGH);
+  digitalWrite(corridorLed, HIGH);
   Serial.begin(9600);
   while (!Serial);
   Serial1.begin(115200);
@@ -49,7 +55,7 @@ void loop()
         strona += "[{";        
         strona += JsonConstructor("Id", 1);
         strona += ",";
-        strona += JsonConstructor("Name", "kuchnia");
+        strona += JsonConstructor("Name", "Kuchnia");
         strona += ",";
         strona += JsonConstructor("LedStatus", digitalRead(kitchenLed));
         strona += ",";
@@ -57,21 +63,57 @@ void loop()
         strona += "}";
         // END KITCHEN
 
-        // LIVING ROOM
+        // LIVINGROOM
         strona += ",{";        
         strona += JsonConstructor("Id", 2);
         strona += ",";
-        strona += JsonConstructor("Name", "salon");
+        strona += JsonConstructor("Name", "Salon");
         strona += ",";
         strona += JsonConstructor("LedStatus", digitalRead(livingLed));
         strona += ",";
         strona += JsonConstructor("TempStatus", sensors.getTempCByIndex(1));
         strona += "}";
-        // END LIVING ROOM
+        // END LIVINGROOM
+
+        // BEDROOM
+        strona += ",{";        
+        strona += JsonConstructor("Id", 3);
+        strona += ",";
+        strona += JsonConstructor("Name", "Sypialnia");
+        strona += ",";
+        strona += JsonConstructor("LedStatus", digitalRead(bedRoomLed));
+        strona += ",";
+        strona += JsonConstructor("TempStatus", sensors.getTempCByIndex(2));
+        strona += "}";
+        // END BEDROOM
+
+         // BATHROOM
+        strona += ",{";        
+        strona += JsonConstructor("Id", 4);
+        strona += ",";
+        strona += JsonConstructor("Name", "Łazienka");
+        strona += ",";
+        strona += JsonConstructor("LedStatus", digitalRead(bathRoomLed));
+        strona += ",";
+        strona += JsonConstructor("TempStatus", sensors.getTempCByIndex(3));
+        strona += "}";
+        // END BATHROOM
+        
+          // CORRIDOR
+        strona += ",{";        
+        strona += JsonConstructor("Id", 5);
+        strona += ",";
+        strona += JsonConstructor("Name", "Korytarz");
+        strona += ",";
+        strona += JsonConstructor("LedStatus", digitalRead(corridorLed));
+        strona += ",";
+        strona += JsonConstructor("TempStatus", sensors.getTempCByIndex(4));
+        strona += "}";
+        // END CORRIDOR
 
         strona += "]";
       }
-      else if (serialString.indexOf("kuchniaLed") > 0) {
+      else if (serialString.indexOf("KuchniaLed") > 0) {
         strona += "{";
         if (digitalRead(kitchenLed) == 0) {
           digitalWrite(kitchenLed, HIGH);
@@ -83,7 +125,7 @@ void loop()
             
           strona += "}";
       }
-      else if (serialString.indexOf("salonLed") > 0) {
+      else if (serialString.indexOf("SalonLed") > 0) {
         strona += "{";
         if (digitalRead(livingLed) == 0) {
           digitalWrite(livingLed, HIGH);
@@ -96,9 +138,44 @@ void loop()
           strona += "}";
       }
 
+      else if (serialString.indexOf("SypialniaLed") > 0) {
+        strona += "{";
+        if (digitalRead(bedRoomLed) == 0) {
+          digitalWrite(bedRoomLed, HIGH);
+          strona += JsonConstructor("LedStatus",1 );  
+        } else {
+          digitalWrite(bedRoomLed, LOW);
+          strona += JsonConstructor("LedStatus",0 );  
+        }
+            
+          strona += "}";
+      }
 
+      else if (serialString.indexOf("LazienkaLed") > 0) {
+        strona += "{";
+        if (digitalRead(bathRoomLed) == 0) {
+          digitalWrite(bathRoomLed, HIGH);
+          strona += JsonConstructor("LedStatus",1 );  
+        } else {
+          digitalWrite(bathRoomLed, LOW);
+          strona += JsonConstructor("LedStatus",0 );  
+        }
+            
+          strona += "}";
+      }
 
-      // KORYTARZ LED END
+      else if (serialString.indexOf("KorytarzLed") > 0) {
+        strona += "{";
+        if (digitalRead(corridorLed) == 0) {
+          digitalWrite(corridorLed, HIGH);
+          strona += JsonConstructor("LedStatus",1 );  
+        } else {
+          digitalWrite(corridorLed, LOW);
+          strona += JsonConstructor("LedStatus",0 );  
+        }
+            
+          strona += "}";
+      }
       sprintf(bufor, "AT+CIPSEND=%c,%d", client[0], strona.length());
 
 
