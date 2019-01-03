@@ -1,47 +1,61 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-OneWire oneWire(A4);
-DallasTemperature sensors(&oneWire); //Przekazania informacji do biblioteki
-//OneWire oneWireLiving(A4);
-//DallasTemperature livingTemp(&oneWireLiving); //Przekazania informacji do biblioteki
+OneWire oneWire00(A0);
+DallasTemperature sensors00(&oneWire00); //Przekazania informacji do biblioteki
+
+OneWire oneWire01(A1);
+DallasTemperature sensors01(&oneWire01);
+
+OneWire oneWire02(A2);
+DallasTemperature sensors02(&oneWire02);
+
+OneWire oneWire03(A3);
+DallasTemperature sensors03(&oneWire03);
 
 char client[1];
 char bufor[500];
 String strona;
-int kitchenLed = 22;
-int livingLed = 30;
-int bedRoomLed = 35;
-int bathRoomLed = 40;
-int corridorLed = 45;
+int room00 = 22;
+int room01 = 30;
+int room02 = 35;
+int room03 = 40;
+//int corridorLed = 45;
 
 void setup()
 {
   // put your setup code here, to run once:
-  digitalWrite(kitchenLed, HIGH);
-  digitalWrite(livingLed, HIGH);
-  digitalWrite(bedRoomLed, HIGH);
-  digitalWrite(bathRoomLed, HIGH);
-  digitalWrite(corridorLed, HIGH);
+  digitalWrite(room00, HIGH);
+  digitalWrite(room01, HIGH);
+  digitalWrite(room02, HIGH);
+  digitalWrite(room03, HIGH);
+//  digitalWrite(corridorLed, HIGH);
   Serial.begin(9600);
   while (!Serial);
   Serial1.begin(115200);
   Configuration();
-  sensors.begin();
-//  livingTemp.begin();
+  sensors00.begin();
+  sensors01.begin();
+  sensors02.begin();
+  sensors03.begin();
 }
 
 void loop()
 {
-  sensors.requestTemperatures();
-//   Serial.println("ZERO");
-//    Serial.println(sensors.getTempCByIndex(0));
-//    Serial.println("JEDEN");
-//    Serial.println(sensors.getTempCByIndex(1));
-//    delay(1000);
+  sensors00.requestTemperatures();
+  sensors01.requestTemperatures();
+  sensors02.requestTemperatures();
+  sensors03.requestTemperatures();
+//     Serial.print("ZERO: ");
+//      Serial.println(sensors03.getTempCByIndex(0));
+//      Serial.print("            JEDEN: ");
+//      Serial.println(sensors01.getTempCByIndex(0));
+//      Serial.print("                       DWA: ");
+//      Serial.println(sensors1.getTempCByIndex(0));
+//      delay(1500);
   while (Serial1.available() > 0)
   {
-   
+
     if (Serial1.find("+IPD,"))
     {
       Serial1.readBytesUntil(',', client, 1);
@@ -51,131 +65,131 @@ void loop()
       // KORYTARZ LED
       if (serialString.indexOf("GetAllRoomStatus") > 0)
       {
-        // KITCHEN
-        strona += "[{";        
+        // room00
+        strona += "[{";
         strona += JsonConstructor("Id", 1);
         strona += ",";
-        strona += JsonConstructor("Name", "Kuchnia");
+        strona += JsonConstructor("Name", "room00");
         strona += ",";
-        strona += JsonConstructor("LedStatus", digitalRead(kitchenLed));
+        strona += JsonConstructor("LedStatus", digitalRead(room00));
         strona += ",";
-        strona += JsonConstructor("TempStatus", sensors.getTempCByIndex(0));
+        strona += JsonConstructor("TempStatus", sensors00.getTempCByIndex(0));
         strona += "}";
-        // END KITCHEN
+        // END room00
 
-        // LIVINGROOM
-        strona += ",{";        
+        // room01
+        strona += ",{";
         strona += JsonConstructor("Id", 2);
         strona += ",";
-        strona += JsonConstructor("Name", "Salon");
+        strona += JsonConstructor("Name", "room01");
         strona += ",";
-        strona += JsonConstructor("LedStatus", digitalRead(livingLed));
+        strona += JsonConstructor("LedStatus", digitalRead(room01));
         strona += ",";
-        strona += JsonConstructor("TempStatus", sensors.getTempCByIndex(1));
+        strona += JsonConstructor("TempStatus", sensors01.getTempCByIndex(0));
         strona += "}";
-        // END LIVINGROOM
+        // END room01
 
-        // BEDROOM
-        strona += ",{";        
+        // room02
+        strona += ",{";
         strona += JsonConstructor("Id", 3);
         strona += ",";
-        strona += JsonConstructor("Name", "Sypialnia");
+        strona += JsonConstructor("Name", "room02");
         strona += ",";
-        strona += JsonConstructor("LedStatus", digitalRead(bedRoomLed));
+        strona += JsonConstructor("LedStatus", digitalRead(room02));
         strona += ",";
-        strona += JsonConstructor("TempStatus", sensors.getTempCByIndex(2));
+        strona += JsonConstructor("TempStatus", sensors02.getTempCByIndex(0));
         strona += "}";
-        // END BEDROOM
+        // END room02
 
-         // BATHROOM
-        strona += ",{";        
+        // BATHROOM
+        strona += ",{";
         strona += JsonConstructor("Id", 4);
         strona += ",";
-        strona += JsonConstructor("Name", "Łazienka");
+        strona += JsonConstructor("Name", "room03");
         strona += ",";
-        strona += JsonConstructor("LedStatus", digitalRead(bathRoomLed));
+        strona += JsonConstructor("LedStatus", digitalRead(room03));
         strona += ",";
-        strona += JsonConstructor("TempStatus", sensors.getTempCByIndex(3));
+        strona += JsonConstructor("TempStatus", sensors03.getTempCByIndex(0));
         strona += "}";
         // END BATHROOM
-        
-          // CORRIDOR
-        strona += ",{";        
-        strona += JsonConstructor("Id", 5);
-        strona += ",";
-        strona += JsonConstructor("Name", "Korytarz");
-        strona += ",";
-        strona += JsonConstructor("LedStatus", digitalRead(corridorLed));
-        strona += ",";
-        strona += JsonConstructor("TempStatus", sensors.getTempCByIndex(4));
-        strona += "}";
-        // END CORRIDOR
+
+//        // CORRIDOR
+//        strona += ",{";
+//        strona += JsonConstructor("Id", 5);
+//        strona += ",";
+//        strona += JsonConstructor("Name", "Korytarz");
+//        strona += ",";
+//        strona += JsonConstructor("LedStatus", digitalRead(corridorLed));
+//        strona += ",";
+//        strona += JsonConstructor("TempStatus", sensors.getTempCByIndex(4));
+//        strona += "}";
+//         END CORRIDOR
 
         strona += "]";
       }
-      else if (serialString.indexOf("KuchniaLed") > 0) {
+      else if (serialString.indexOf("room00Led") > 0) {
         strona += "{";
-        if (digitalRead(kitchenLed) == 0) {
-          digitalWrite(kitchenLed, HIGH);
-          strona += JsonConstructor("LedStatus",1 );  
+        if (digitalRead(room00) == 0) {
+          digitalWrite(room00, HIGH);
+          strona += JsonConstructor("LedStatus", 1 );
         } else {
-          digitalWrite(kitchenLed, LOW);
-          strona += JsonConstructor("LedStatus",0 );  
+          digitalWrite(room00, LOW);
+          strona += JsonConstructor("LedStatus", 0 );
         }
-            
-          strona += "}";
+
+        strona += "}";
       }
-      else if (serialString.indexOf("SalonLed") > 0) {
+      else if (serialString.indexOf("room01Led") > 0) {
         strona += "{";
-        if (digitalRead(livingLed) == 0) {
-          digitalWrite(livingLed, HIGH);
-          strona += JsonConstructor("LedStatus",1 );  
+        if (digitalRead(room01) == 0) {
+          digitalWrite(room01, HIGH);
+          strona += JsonConstructor("LedStatus", 1 );
         } else {
-          digitalWrite(livingLed, LOW);
-          strona += JsonConstructor("LedStatus",0 );  
+          digitalWrite(room01, LOW);
+          strona += JsonConstructor("LedStatus", 0 );
         }
-            
-          strona += "}";
+
+        strona += "}";
       }
 
-      else if (serialString.indexOf("SypialniaLed") > 0) {
+      else if (serialString.indexOf("room02Led") > 0) {
         strona += "{";
-        if (digitalRead(bedRoomLed) == 0) {
-          digitalWrite(bedRoomLed, HIGH);
-          strona += JsonConstructor("LedStatus",1 );  
+        if (digitalRead(room02) == 0) {
+          digitalWrite(room02, HIGH);
+          strona += JsonConstructor("LedStatus", 1 );
         } else {
-          digitalWrite(bedRoomLed, LOW);
-          strona += JsonConstructor("LedStatus",0 );  
+          digitalWrite(room02, LOW);
+          strona += JsonConstructor("LedStatus", 0 );
         }
-            
-          strona += "}";
+
+        strona += "}";
       }
 
-      else if (serialString.indexOf("LazienkaLed") > 0) {
+      else if (serialString.indexOf("room03Led") > 0) {
         strona += "{";
-        if (digitalRead(bathRoomLed) == 0) {
-          digitalWrite(bathRoomLed, HIGH);
-          strona += JsonConstructor("LedStatus",1 );  
+        if (digitalRead(room03) == 0) {
+          digitalWrite(room03, HIGH);
+          strona += JsonConstructor("LedStatus", 1 );
         } else {
-          digitalWrite(bathRoomLed, LOW);
-          strona += JsonConstructor("LedStatus",0 );  
+          digitalWrite(room03, LOW);
+          strona += JsonConstructor("LedStatus", 0 );
         }
-            
-          strona += "}";
+
+        strona += "}";
       }
 
-      else if (serialString.indexOf("KorytarzLed") > 0) {
-        strona += "{";
-        if (digitalRead(corridorLed) == 0) {
-          digitalWrite(corridorLed, HIGH);
-          strona += JsonConstructor("LedStatus",1 );  
-        } else {
-          digitalWrite(corridorLed, LOW);
-          strona += JsonConstructor("LedStatus",0 );  
-        }
-            
-          strona += "}";
-      }
+//      else if (serialString.indexOf("KorytarzLed") > 0) {
+//        strona += "{";
+//        if (digitalRead(corridorLed) == 0) {
+//          digitalWrite(corridorLed, HIGH);
+//          strona += JsonConstructor("LedStatus", 1 );
+//        } else {
+//          digitalWrite(corridorLed, LOW);
+//          strona += JsonConstructor("LedStatus", 0 );
+//        }
+//
+//        strona += "}";
+//      }
       sprintf(bufor, "AT+CIPSEND=%c,%d", client[0], strona.length());
 
 
